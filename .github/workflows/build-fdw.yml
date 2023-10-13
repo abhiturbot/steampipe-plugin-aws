@@ -11,7 +11,7 @@ jobs:
       - name: Check out steampipe-postgres-fdw
         uses: actions/checkout@v2
         with:
-          repository: "steampipe/steampipe-postgres-fdw"
+          repository: "turbot/steampipe-postgres-fdw"
           ref: standalone
 
       - name: Build steampipe-postgres-fdw
