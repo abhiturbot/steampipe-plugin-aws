@@ -17,8 +17,7 @@ jobs:
       - name: Build steampipe-postgres-fdw
         run: |
           pwd
-          ls -la
-          cd standalone
+          ls -ltr
           make standalone plugin_alias="aws" plugin_github_url="github.com/turbot/steampipe-plugin-aws/aws"
-          ls -la
+          ls -ltr
           
