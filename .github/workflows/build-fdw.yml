@@ -1,0 +1,23 @@
+name: Build and Test FDW
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out steampipe-postgres-fdw
+        uses: actions/checkout@v2
+        with:
+          repository: "steampipe/steampipe-postgres-fdw"
+          ref: standalone
+
+      - name: Build steampipe-postgres-fdw
+        run: |
+          cd steampipe-postgres-fdw
+
+          make standalone plugin_alias="aws" plugin_github_ref="github.com/turbot/steampipe-plugin-aws/aws"
+          
+        working-directory: ./steampipe-postgres-fdw
