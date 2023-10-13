@@ -17,4 +17,6 @@ jobs:
       - name: Build steampipe-postgres-fdw
         run: |
           pwd
+          cd standalone
           ls -la
+          
