@@ -93,4 +93,32 @@ jobs:
         with:
           name: steampipe_postgres_fdw_aws--1.0.sql.linux_amd64
           path: build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
-          if-no-files-found: error           
+          if-no-files-found: error
+          
+  build-draft-release:
+    name: Build Draft Release
+    runs-on: ubuntu-latest
+    needs:
+      - build-linux
+    steps:
+      - name: Download steampipe_postgres_fdw_aws.so - linux_amd64
+        id: download_fdw_aws_so_linux_amd64
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_aws.so.linux_amd64
+
+      - name: Download steampipe_postgres_fdw_aws.control
+        id: download_fdw_aws_control
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_aws.control
+
+      - name: Download steampipe_postgres_fdw_aws--1.0.sql
+        id: download_fdw_aws_sql
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_aws--1.0.sql
+
+      - name: Check Path
+        run: |-
+          ls -la          
