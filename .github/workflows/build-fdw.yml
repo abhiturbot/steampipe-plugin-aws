@@ -20,5 +20,4 @@ jobs:
           cd steampipe-postgres-fdw
           pwd
           make standalone plugin_alias="aws" plugin_github_ref="github.com/turbot/steampipe-plugin-aws/aws"
-          
-        working-directory: ./steampipe-postgres-fdw
+      
