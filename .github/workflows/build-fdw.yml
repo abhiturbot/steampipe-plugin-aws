@@ -59,3 +59,38 @@ jobs:
           make standalone plugin_alias="aws" plugin_github_url="github.com/turbot/steampipe-plugin-aws/aws"
           ls -ltr
           
+      - name: gzip the steampipe_postgres_fdw_aws.so
+        run: |-
+          gzip build-Linux/steampipe_postgres_fdw_aws.so
+          mv build-Linux/steampipe_postgres_fdw_aws.so.gz build-Linux/steampipe_postgres_fdw_aws.so.linux_amd64.gz
+  
+      - name: Save Linux Build Artifact aws.so - AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_aws.so.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_aws.so.linux_amd64.gz
+          if-no-files-found: error
+  
+      - name: gzip the steampipe_postgres_fdw_aws.control
+        run: |-
+          gzip build-Linux/steampipe_postgres_fdw_aws.control
+          mv build-Linux/steampipe_postgres_fdw_aws.control.gz build-Linux/steampipe_postgres_fdw_aws.control.linux_amd64.gz
+  
+      - name: Save Linux Build Artifact aws.control - AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_aws.control.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_aws.control.linux_amd64.gz
+          if-no-files-found: error   
+  
+      - name: gzip the steampipe_postgres_fdw_aws--1.0.sql
+        run: |-
+          gzip build-Linux/steampipe_postgres_fdw_aws--1.0.sql
+          mv build-Linux/steampipe_postgres_fdw_aws--1.0.sql.gz build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
+  
+      - name: Save Linux Build Artifact aws.--1.0.sql- AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_aws--1.0.sql.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
+          if-no-files-found: error           
