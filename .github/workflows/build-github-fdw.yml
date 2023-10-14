@@ -85,18 +85,98 @@ jobs:
           name: steampipe_postgres_fdw_github--1.0.sql
           path: build-Linux/steampipe_postgres_fdw_github--1.0.sql
           if-no-files-found: error
+
+  build-osx:
+    name: Build for Darwin
+    runs-on: macos-latest
+    steps:
+      - name: Install PostgreSQL@14
+        run: brew install --force postgresql@14
+
+      - name: PGConfig
+        run: |-
+          which pg_config
+          ls -l $(which pg_config)
+          PGXS=$(pg_config --pgxs)
+          SERVER_LIB=$(pg_config --includedir)/server
+          INTERNAL_LIB=$(pg_config --includedir)/internal
+
+          echo $PGXS
+          echo $SERVER_LIB
+          echo $INTERNAL_LIB
           
+          ls -l $PGXS
+          ls -l $SERVER_LIB
+          ls -l $INTERNAL_LIB
+
+      - name: Check out steampipe-postgres-fdw
+        uses: actions/checkout@v2
+        with:
+          repository: "turbot/steampipe-postgres-fdw"
+          ref: standalone
+
+      - name: Setup Golang
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+          
+      - name: Find stuff and set env
+        run: |-
+          go version
+          
+          which pg_config
+          pg_config --version
+          
+          export PATH=$(pg_config --bindir):$PATH
+          export PGXS=$(pg_config --pgxs)
+      
+          export SERVER_LIB=$(pg_config --includedir)/server
+          export INTERNAL_LIB=$(pg_config --includedir)/internal
+
+          export CFLAGS="$(pg_config --cflags) -I${SERVER_LIB} -I${INTERNAL_LIB} -g"
+          export PG_CFLAGS="$(pg_config --cflags) -I${SERVER_LIB} -I${INTERNAL_LIB} -g"
+      
+          export LDFLAGS=$(pg_config --ldfalgs)
+          export PG_LDFLAGS=$(pg_config --ldfalgs)
+
+      - name: Build steampipe-postgres-fdw
+        run: |
+          pwd
+          ls -ltr
+          make standalone plugin_alias="github" plugin_github_url="github.com/turbot/steampipe-plugin-github"
+          ls -ltr
+          
+
+      - name: gzip the steampipe_postgres_fdw_github.so
+        run: |-
+          gzip build-Darwin/steampipe_postgres_fdw_github.so
+          mv build-Darwin/steampipe_postgres_fdw_github.so.gz build-Darwin/steampipe_postgres_fdw_github.so.darwin_amd64.gz
+
+      - name: Save MacOS Build Artifact github.so- AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github.so.darwin_amd64
+          path: build-Darwin/steampipe_postgres_fdw_github.so.darwin_amd64.gz
+          if-no-files-found: error
+
   build-draft-release:
     name: Build Draft Release
     runs-on: ubuntu-latest
     needs:
       - build-linux
-    steps:
+      - build-osx
+    steps:    
       - name: Download steampipe_postgres_fdw_github.so - linux_amd64
         id: download_fdw_github_so_linux_amd64
         uses: actions/download-artifact@v3
         with:
           name: steampipe_postgres_fdw_github.so.linux_amd64
+
+      - name: Download steampipe_postgres_fdw_github.so - darwin_amd64
+        id: download_fdw_github_so_darwin_amd64
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github.so.darwin_amd64
 
       - name: Download steampipe_postgres_fdw_github.control
         id: download_fdw_github_control
