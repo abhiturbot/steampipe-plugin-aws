@@ -1,4 +1,4 @@
-name: Build github postgres FDW
+name: Build Github postgres FDW
 
 on:
   workflow_dispatch:
