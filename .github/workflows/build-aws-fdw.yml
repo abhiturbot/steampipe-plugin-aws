@@ -1,4 +1,4 @@
-name: Build and Test FDW
+name: Build AWS postgres FDW
 
 on:
   workflow_dispatch:
@@ -69,30 +69,21 @@ jobs:
         with:
           name: steampipe_postgres_fdw_aws.so.linux_amd64
           path: build-Linux/steampipe_postgres_fdw_aws.so.linux_amd64.gz
-          if-no-files-found: error
+          if-no-files-found: error          
   
-      - name: gzip the steampipe_postgres_fdw_aws.control
-        run: |-
-          gzip build-Linux/steampipe_postgres_fdw_aws.control
-          mv build-Linux/steampipe_postgres_fdw_aws.control.gz build-Linux/steampipe_postgres_fdw_aws.control.linux_amd64.gz
   
       - name: Save Linux Build Artifact aws.control - AMD64
         uses: actions/upload-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws.control.linux_amd64
-          path: build-Linux/steampipe_postgres_fdw_aws.control.linux_amd64.gz
+          name: steampipe_postgres_fdw_aws.control
+          path: build-Linux/steampipe_postgres_fdw_aws.control
           if-no-files-found: error   
-  
-      - name: gzip the steampipe_postgres_fdw_aws--1.0.sql
-        run: |-
-          gzip build-Linux/steampipe_postgres_fdw_aws--1.0.sql
-          mv build-Linux/steampipe_postgres_fdw_aws--1.0.sql.gz build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
   
       - name: Save Linux Build Artifact aws.--1.0.sql- AMD64
         uses: actions/upload-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws--1.0.sql.linux_amd64
-          path: build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
+          name: steampipe_postgres_fdw_aws--1.0.sql
+          path: build-Linux/steampipe_postgres_fdw_aws--1.0.sql
           if-no-files-found: error
           
   build-draft-release:
@@ -111,13 +102,13 @@ jobs:
         id: download_fdw_aws_control
         uses: actions/download-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws.control.linux_amd64
+          name: steampipe_postgres_fdw_aws.control
 
       - name: Download steampipe_postgres_fdw_aws--1.0.sql
         id: download_fdw_aws_sql
         uses: actions/download-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws--1.0.sql.linux_amd64
+          name: steampipe_postgres_fdw_aws--1.0.sql
 
       - name: Check Path
         run: |-
