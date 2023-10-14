@@ -193,4 +193,19 @@ jobs:
 
       - name: Check Path
         run: |-
-          ls -la          
+          ls -la
+
+      - name: Create a draft release
+        uses: softprops/action-gh-release@v1
+        id: create_draft_release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: true
+          name: v0.1.0-aws.0
+          tag_name: v0.1.0-aws.0
+          repository: ${{ github.repository }}
+          files: |-
+            ${{ steps.download_fdw_aws_sql.outputs.download-path }}/steampipe_postgres_fdw_aws--1.0.sql
+            ${{ steps.download_fdw_aws_control.outputs.download-path }}/steampipe_postgres_fdw_aws.control
+            ${{ steps.download_fdw_aws_so_linux_amd64.outputs.download-path }}/steampipe_postgres_fdw_aws.so.linux_amd64.gz
+            ${{ steps.download_fdw_aws_so_darwin_amd64.outputs.download-path }}/steampipe_postgres_fdw_aws.so.darwin_amd64.gz

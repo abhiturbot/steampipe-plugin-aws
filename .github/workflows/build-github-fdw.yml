@@ -193,3 +193,18 @@ jobs:
       - name: Check Path
         run: |-
           ls -la          
+
+      - name: Create a draft release
+        uses: softprops/action-gh-release@v1
+        id: create_draft_release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: true
+          name: v0.1.0-github.0
+          tag_name: v0.1.0-github.0
+          repository: ${{ github.repository }}
+          files: |-
+            ${{ steps.download_fdw_github_sql.outputs.download-path }}/steampipe_postgres_fdw_github--1.0.sql
+            ${{ steps.download_fdw_github_control.outputs.download-path }}/steampipe_postgres_fdw_github.control
+            ${{ steps.download_fdw_github_so_linux_amd64.outputs.download-path }}/steampipe_postgres_fdw_github.so.linux_amd64.gz
+            ${{ steps.download_fdw_github_so_darwin_amd64.outputs.download-path }}/steampipe_postgres_fdw_github.so.darwin_amd64.gz
