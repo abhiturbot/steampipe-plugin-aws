@@ -198,7 +198,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         id: create_draft_release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
           name: v0.1.0-github.0
           tag_name: v0.1.0-github.0
