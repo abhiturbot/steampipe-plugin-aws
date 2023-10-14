@@ -111,13 +111,13 @@ jobs:
         id: download_fdw_aws_control
         uses: actions/download-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws.control
+          name: steampipe_postgres_fdw_aws.control.linux_amd64
 
       - name: Download steampipe_postgres_fdw_aws--1.0.sql
         id: download_fdw_aws_sql
         uses: actions/download-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws--1.0.sql
+          name: steampipe_postgres_fdw_aws--1.0.sql.linux_amd64
 
       - name: Check Path
         run: |-
