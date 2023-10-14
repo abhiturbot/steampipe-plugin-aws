@@ -62,37 +62,37 @@ jobs:
       - name: gzip the steampipe_postgres_fdw_aws.so
         run: |-
           gzip build-Linux/steampipe_postgres_fdw_aws.so
-          mv build-Linux/steampipe_postgres_fdw_aws.so.gz build-Linux/steampipe_postgres_fdw_aws.so.gz
+          mv build-Linux/steampipe_postgres_fdw_aws.so.gz build-Linux/steampipe_postgres_fdw_aws.so.linux_amd64.gz
   
       - name: Save Linux Build Artifact aws.so - AMD64
         uses: actions/upload-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws.so
-          path: build-Linux/steampipe_postgres_fdw_aws.so.gz
+          name: steampipe_postgres_fdw_aws.so.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_aws.so.linux_amd64.gz
           if-no-files-found: error
   
       - name: gzip the steampipe_postgres_fdw_aws.control
         run: |-
           gzip build-Linux/steampipe_postgres_fdw_aws.control
-          mv build-Linux/steampipe_postgres_fdw_aws.control.gz build-Linux/steampipe_postgres_fdw_aws.control.gz
+          mv build-Linux/steampipe_postgres_fdw_aws.control.gz build-Linux/steampipe_postgres_fdw_aws.control.linux_amd64.gz
   
       - name: Save Linux Build Artifact aws.control - AMD64
         uses: actions/upload-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws.control
-          path: build-Linux/steampipe_postgres_fdw_aws.control.gz
+          name: steampipe_postgres_fdw_aws.control.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_aws.control.linux_amd64.gz
           if-no-files-found: error   
   
       - name: gzip the steampipe_postgres_fdw_aws--1.0.sql
         run: |-
           gzip build-Linux/steampipe_postgres_fdw_aws--1.0.sql
-          mv build-Linux/steampipe_postgres_fdw_aws--1.0.sql.gz build-Linux/steampipe_postgres_fdw_aws--1.0.sql.gz
+          mv build-Linux/steampipe_postgres_fdw_aws--1.0.sql.gz build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
   
       - name: Save Linux Build Artifact aws.--1.0.sql- AMD64
         uses: actions/upload-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws--1.0.sql
-          path: build-Linux/steampipe_postgres_fdw_aws--1.0.sql.gz
+          name: steampipe_postgres_fdw_aws--1.0.sql.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_aws--1.0.sql.linux_amd64.gz
           if-no-files-found: error
           
   build-draft-release:
@@ -105,7 +105,7 @@ jobs:
         id: download_fdw_aws_so_linux_amd64
         uses: actions/download-artifact@v3
         with:
-          name: steampipe_postgres_fdw_aws.so
+          name: steampipe_postgres_fdw_aws.so.linux_amd64
 
       - name: Download steampipe_postgres_fdw_aws.control
         id: download_fdw_aws_control
@@ -121,4 +121,4 @@ jobs:
 
       - name: Check Path
         run: |-
-          ls -la
+          ls -la          
