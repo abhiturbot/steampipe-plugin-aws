@@ -1,0 +1,115 @@
+name: Build github postgres FDW
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - name: Check out steampipe-postgres-fdw
+        uses: actions/checkout@v2
+        with:
+          repository: "turbot/steampipe-postgres-fdw"
+          ref: standalone
+          
+      - name: Setup GoLang
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+  
+      - name: Setup apt-get
+        run: |-
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          sudo env ACCEPT_EULA=Y apt-get update
+          sudo env ACCEPT_EULA=Y apt-get upgrade
+  
+      - name: Install PostgreSQL14 Dev
+        run: |-
+          sudo apt-get -y install postgresql-server-dev-14
+  
+      - name: Find stuff and set env
+        run: |-
+          
+          which pg_config
+          pg_config --version
+  
+          export PATH=$(pg_config --bindir):$PATH
+          export PGXS=$(pg_config --pgxs)
+      
+          export SERVER_LIB=$(pg_config --includedir)/14/server
+          export INTERNAL_LIB=$(pg_config --includedir)/internal
+  
+          export CFLAGS="$(pg_config --cflags) -I${SERVER_LIB} -I${INTERNAL_LIB} -g"
+          export PG_CFLAGS="$(pg_config --cflags) -I${SERVER_LIB} -I${INTERNAL_LIB} -g"
+      
+          export LDFLAGS=$(pg_config --ldflags)
+          export PG_LDFLAGS=$(pg_config --ldflags)
+  
+          ls -la $SERVER_LIB
+          ls -la $INTERNAL_LIB
+        
+      - name: Build steampipe-postgres-fdw
+        run: |
+          pwd
+          ls -ltr
+          make standalone plugin_alias="github" plugin_github_url="github.com/turbot/steampipe-plugin-github/github"
+          ls -ltr
+          
+      - name: gzip the steampipe_postgres_fdw_github.so
+        run: |-
+          gzip build-Linux/steampipe_postgres_fdw_github.so
+          mv build-Linux/steampipe_postgres_fdw_github.so.gz build-Linux/steampipe_postgres_fdw_github.so.linux_amd64.gz
+  
+      - name: Save Linux Build Artifact github.so - AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github.so.linux_amd64
+          path: build-Linux/steampipe_postgres_fdw_github.so.linux_amd64.gz
+          if-no-files-found: error          
+  
+  
+      - name: Save Linux Build Artifact github.control - AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github.control
+          path: build-Linux/steampipe_postgres_fdw_github.control
+          if-no-files-found: error   
+  
+      - name: Save Linux Build Artifact github.--1.0.sql- AMD64
+        uses: actions/upload-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github--1.0.sql
+          path: build-Linux/steampipe_postgres_fdw_github--1.0.sql
+          if-no-files-found: error
+          
+  build-draft-release:
+    name: Build Draft Release
+    runs-on: ubuntu-latest
+    needs:
+      - build-linux
+    steps:
+      - name: Download steampipe_postgres_fdw_github.so - linux_amd64
+        id: download_fdw_github_so_linux_amd64
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github.so.linux_amd64
+
+      - name: Download steampipe_postgres_fdw_github.control
+        id: download_fdw_github_control
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github.control
+
+      - name: Download steampipe_postgres_fdw_github--1.0.sql
+        id: download_fdw_github_sql
+        uses: actions/download-artifact@v3
+        with:
+          name: steampipe_postgres_fdw_github--1.0.sql
+
+      - name: Check Path
+        run: |-
+          ls -la          
