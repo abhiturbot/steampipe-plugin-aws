@@ -56,7 +56,7 @@ jobs:
         run: |
           pwd
           ls -ltr
-          make standalone plugin_alias="aws" plugin_github_url="github.com/turbot/steampipe-plugin-aws/aws"
+          make standalone plugin_alias="aws" plugin_github_url="github.com/turbot/steampipe-plugin-aws"
           ls -ltr
           
       - name: gzip the steampipe_postgres_fdw_aws.so
